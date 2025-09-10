@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <!-- Load properties from Spring's environment -->
+    <springProperty scope="context" name="springAppVersion" source="app.version"/>
+    <springProperty scope="context" name="springActiveProfile" source="spring.profiles.active"/>
+
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <fieldName>timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <logLevel>
+                    <fieldName>logLevel</fieldName>
+                </logLevel>
+                <threadName>
+                    <fieldName>thread_name</fieldName>
+                </threadName>
+                <loggerName>
+                    <fieldName>logger_name</fieldName>
+                </loggerName>
+                <message>
+                    <fieldName>message</fieldName>
+                </message>
+
+                <pattern>
+                    <fieldName>metadata</fieldName>
+                    <pattern>
+                        {
+                        "ServiceHostName": "%property{HOSTNAME:-unknown}",
+                        "PID": "${PID:-}",
+                        "environment": "${springActiveProfile:-default}",
+                        "app.version": "${springAppVersion:-1.0.0}"
+                        }
+                    </pattern>
+                </pattern>
+
+                <mdc>
+                    <!-- Add serviceName and other MDC fields dynamically -->
+                    <includeMdcKeyName>serviceName</includeMdcKeyName>
+                </mdc>
+
+                <!-- Advanced providers for detailed debugging -->
+                <callerData>
+                    <classFieldName>class</classFieldName>
+                    <methodFieldName>method</methodFieldName>
+                    <fileFieldName>file</fileFieldName>
+                    <lineFieldName>line</lineFieldName>
+                </callerData>
+                <stackTrace>
+                    <fieldName>stackTrace</fieldName>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>200</maxDepthPerThrowable>
+                        <maxLength>5000</maxLength>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </stackTrace>
+
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_CONSOLE" />
+    </root>
+
+</configuration>
