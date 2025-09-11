@@ -45,11 +45,6 @@
 <!--			<version>1.8.3</version>-->
 <!--		</dependency>-->
 <!--		<dependency>-->
-<!--			<groupId>org.json</groupId>-->
-<!--			<artifactId>json</artifactId>-->
-<!--			<version>20240303</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
 <!--			<groupId>ch.qos.logback</groupId>-->
 <!--			<artifactId>logback-core</artifactId>-->
 <!--			<version>1.5.18</version>-->
@@ -59,6 +54,11 @@
 <!--			<artifactId>logback-classic</artifactId>-->
 <!--			<version>1.5.18</version>-->
 <!--		</dependency>-->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20240303</version>
+		</dependency>
 
 		<!-- Micrometer Tracing -->
 		<dependency>
