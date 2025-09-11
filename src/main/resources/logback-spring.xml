@@ -1,25 +1,39 @@
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>
-                {
-                "timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}",
-                "logLevel":"%level",
-                "thread_name":"%thread",
-                "logger_name":"%logger",
-                "message":"%replace(%msg){'(?i)(password|email|token|cardNumber)[^,}]*','\"\\1\":\"******\"'}",
-                "service":"order-service",
-                "correlationId":"%X{correlationId}",
-                "class":"%C",
-                "method":"%M",
-                "file":"%F",
-                "line":%L
-                }
-            </pattern>
+    <appender name="mask" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.example.serviceBdemo.MaskingPatternLayout">
+
+                <!-- SSN: Match quoted or unquoted digits -->
+                <maskPattern>"SSN"\s*:\s*"?([0-9]{3,})"?</maskPattern>
+
+                <!-- Address: Keep as is -->
+                <maskPattern>"address"\s*:\s*"(.*?)"</maskPattern>
+
+                <!-- IP Address: IPv4 only (for now) -->
+                <maskPattern>(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)</maskPattern>
+
+                <!-- Email: Stricter pattern -->
+                <maskPattern>([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})</maskPattern>
+
+                <!-- Log Pattern -->
+<!--                <pattern>%-5p [%d{ISO8601,UTC}] [%thread] %c: %m%n%rootException</pattern>-->
+                <pattern>
+                    {
+                    "timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}",
+                    "level":"%level",
+                    "thread":"%thread",
+                    "logger":"%logger",
+                    "message":"%replace(%msg){'\"','\"'}",
+                    "service":"service-b",
+                    "file":"%F",
+                    "line":%L
+                    }
+                </pattern>
+            </layout>
         </encoder>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="mask" />
     </root>
 </configuration>

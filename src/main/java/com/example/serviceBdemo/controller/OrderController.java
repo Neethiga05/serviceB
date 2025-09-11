@@ -1,6 +1,7 @@
 package com.example.serviceBdemo.controller;
 
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<String> createOrder(@RequestBody Map<String, Object> request) {
-       // Map<String, Object> maskedRequest = SensitiveDataMasker.mask(request);
+        MDC.put("correlationId", MDC.get("traceId"));
         log.info("Received order request: {}", request);
         return ResponseEntity.ok("Order created successfully");
     }
