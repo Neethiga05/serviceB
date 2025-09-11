@@ -17,7 +17,11 @@ public class MaskingPatternLayout extends PatternLayout {
 
     public void addMaskPattern(String maskPattern) {
         maskPatterns.add(maskPattern);
-        multilinePattern = Pattern.compile(maskPatterns.stream().collect(Collectors.joining("|")), Pattern.MULTILINE);
+        // Combine all patterns into one big OR, make it case-insensitive
+        multilinePattern = Pattern.compile(
+                maskPatterns.stream().collect(Collectors.joining("|")),
+                Pattern.MULTILINE | Pattern.CASE_INSENSITIVE
+        );
     }
 
     @Override
@@ -34,7 +38,8 @@ public class MaskingPatternLayout extends PatternLayout {
         while (matcher.find()) {
             IntStream.rangeClosed(1, matcher.groupCount()).forEach(group -> {
                 if (matcher.group(group) != null) {
-                    IntStream.range(matcher.start(group), matcher.end(group)).forEach(i -> sb.setCharAt(i, '*'));
+                    IntStream.range(matcher.start(group), matcher.end(group))
+                            .forEach(i -> sb.setCharAt(i, '*'));
                 }
             });
         }
