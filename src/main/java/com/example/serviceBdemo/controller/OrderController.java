@@ -1,5 +1,6 @@
 package com.example.serviceBdemo.controller;
 
+import io.micrometer.tracing.Tracer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController {
+
 
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
