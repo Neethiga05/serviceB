@@ -1,0 +1,41 @@
+name: AI PR Review
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+# Use the built-in token with the permissions we need to read the repo and write PR comments
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build (mvn package)
+        run: mvn -B -DskipTests package
+
+      - name: Run AI PR reviewer (CLI)
+        env:
+          # LLM key stored in repo/organization secrets
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          # Use the built-in token available as a secret in Actions; this will be allowed to write PR comments
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Enable posting comments back to PRs
+          PRREVIEW_POST_COMMENTS: 'true'
+        run: |
+          mvn -q -DskipTests package org.codehaus.mojo:exec-maven-plugin:3.1.0:java \
+            -Dexec.mainClass="com.example.serviceBdemo.cli.CliPrReviewer" \
+            -Dexec.args="${{ github.repository_owner }} ${{ github.event.repository.name }} ${{ github.event.pull_request.number }}"
+

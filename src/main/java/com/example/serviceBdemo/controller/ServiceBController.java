@@ -15,7 +15,7 @@ public class ServiceBController {
         private final Logger logger = LoggerFactory.getLogger(ServiceBController.class);
 
         @GetMapping("/api2")
-        public String hello() {
+        public String _hello() {
             // Manually add custom fields to the MDC for this service's context
             MDC.put("correlationId", MDC.get("traceId"));
             MDC.put("pubsub.messageId", "1234567890-b");
